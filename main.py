@@ -1,5 +1,3 @@
-
-
 class Node:
     def __init__(self, name):
         self.name = name
@@ -54,7 +52,7 @@ def find_maxVertex(graph):
             maxVertex = node
     return maxVertex
 
-def GA(graph):
+def greedy(graph):
     F = []
 
     graph = remove_less_than(graph, 2)
@@ -67,7 +65,6 @@ def GA(graph):
         length = len(graph)
         if length == 0:
             break
-    m_print(F)
     return F
 
 def test1():
@@ -85,7 +82,9 @@ def test1():
     f.neighbors = [b, c, d, e]
 
     graph = [a, b, c, d, e, f]
-    GA(graph)
+    result = greedy(graph)
+    for stuff in result:
+        print(stuff)
 
 def test2():
     AL = Node('AL')
@@ -199,22 +198,12 @@ def test2():
             OH, OK, OR, PA, RI, SC, SD, TN, TX,
             UT, VT, VA, WA, WV, WI, WY]
 
-    F = []
-
-    i = 0
-    graph = remove_less_than(graph, 2)
-
-    while True:
-        i += 1
-        v = find_maxVertex(graph)
-        F.append(v)
-        graph = remove(graph, v)
-        graph = remove_less_than(graph, 2)
-        length = len(graph)
-        if length == 0:
-            break
-    m_print(F)
-    print(i)
+    result = greedy(graph)
+    for stuff in result:
+        print(stuff)
 
 if __name__ == "__main__":
+    print("Test 1")
     test1()
+    print("Test 2")
+    test2()
