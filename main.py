@@ -1,21 +1,3 @@
-'''
-def GA():
-    for node in graph:
-        if node.neighbors < 2:
-            remove(node, graph)
-    graphs.add(graph)
-    while not graphs[i].isEmpty():
-        maxVertex = test_node # this node has neighbor_count == 5
-        for node in graphs[i]:
-            if degree(node) > degree(maxVertex):
-                manVertex = node
-        F = F.add(maxVertex)
-        V = V.remove(maxVertex)
-        i += 1
-        for node in graphs[i]:
-            if node.neighbors < 2:
-                remove(node, graph)
-'''
 
 
 class Node:
@@ -32,8 +14,8 @@ def weigh(A, B):
     return 1
 
 
-def degree(vertex):
-    return len(vertex.neighbors)
+def degree(node):
+    return len(node.neighbors)
 
 
 # prints the graph
@@ -54,7 +36,7 @@ def m_print(obj):
 
 
 # removes node from graph with deg < degree
-def remove(graph, degree):
+def remove_less_than(graph, degree):
     copy = []
     for node in graph:
         length = len(node.neighbors)
@@ -66,6 +48,46 @@ def remove(graph, degree):
                     node_copy.neighbors.append(neighbor)
             copy.append(node_copy)
     return copy
+
+def remove(graph, node_a):
+    copy = []
+    for node_b in graph:
+        if node_b.name != node_a.name:
+            node_copy = Node(node_b.name)
+            for neighbor in node_b.neighbors:
+                if neighbor.name != node_a.name:
+                    node_copy.neighbors.append(neighbor)
+            copy.append(node_copy)
+    return copy
+
+
+def find_maxVertex(graph):
+    maxVertex = Node('TEST')
+    for node in graph:
+        if degree(node) > degree(maxVertex):
+            maxVertex = node
+    return maxVertex
+
+
+
+def GA(graph):
+    graphs = []
+    i = 0
+    F = []
+
+    graph = remove_less_than(graph, 2)
+
+    while True:
+        v = find_maxVertex(graph)
+        F.append(v)
+        graph = remove(graph, v)
+        graph = remove_less_than(graph, 2)
+        length = len(graph)
+        if length == 0:
+            break
+    print("F")
+    m_print(F)
+    return F
 
 
 if __name__ == "__main__":
@@ -84,4 +106,4 @@ if __name__ == "__main__":
     f.neighbors = [b, c, d, e]
 
     graph = [a, b, c, d, e, f]
-    m_print(remove(graph, 3))
+    GA(graph)
