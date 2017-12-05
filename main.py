@@ -1,7 +1,3 @@
-import sys
-import os
-
-
 '''
 def GA():
     for node in graph:
@@ -26,6 +22,7 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.neighbors = []
+        self.color = None
 
     def __str__(self):
         return self.name
@@ -39,17 +36,36 @@ def degree(vertex):
     return len(vertex.neighbors)
 
 
-def remove(graph, degree):
-    for node in graph:
-        if len(node.neighbors) < degree:
-            graph.remove(node)
-    return graph
-
-
+# prints the graph
 def show_all(graph):
     for node in graph:
         for neighbor in node.neighbors:
             print(neighbor)
+
+def m_print(obj):
+    if type(obj) is Node:
+        foo = str(obj) + ":"
+        for neighbor in obj.neighbors:
+            foo = foo + " " + str(neighbor.name)
+        print(foo)
+    if type(obj) is list:   # when obj is graph
+        for node in obj:
+            m_print(node)
+
+
+# removes node from graph with deg < degree
+def remove(graph, degree):
+    copy = []
+    for node in graph:
+        length = len(node.neighbors)
+        if length >= degree:
+            node_copy = Node(node.name)
+            for neighbor in node.neighbors:
+                length_b = len(neighbor.neighbors)
+                if length_b >= degree:
+                    node_copy.neighbors.append(neighbor)
+            copy.append(node_copy)
+    return copy
 
 
 if __name__ == "__main__":
@@ -68,5 +84,4 @@ if __name__ == "__main__":
     f.neighbors = [b, c, d, e]
 
     graph = [a, b, c, d, e, f]
-
-    show_all(remove(graph, 5))  # should print none, but prints..... wtf?
+    m_print(remove(graph, 3))
