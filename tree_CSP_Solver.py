@@ -1,35 +1,37 @@
-def tree_solver(tree, domain, constraint):
-	length = len(variables)
-	root = tree[0] # can be any variable
-	assignment = []
-	#sorted_set = t_sort(tree)
-	for i in range(length, 2, -1):
-		if(not make_arc_consistent(tree[i].remainingDomain, tree[i].neighbors)):
-			return False
-	for i in range (0, length):
-		if(not tree[i].remainingDomain):
-			return False
+from node import *
 
-		assignment = tree[i].remaningDomain[0]
-		tree[i+1].update_neighbors(assignment)
-
+# tree = entire set of nodes in graph with the cutset removed
+def tree_solver(tree):
+	assignment = [0] * len(tree)
+	tree_copy = list(tree)
+	for node in tree_copy:
+		if(not make_arc_consistent(node)):
+			return False
+	i = 0
+	for node in tree_copy:
+		if(not node.domain):
+			return False
+		if(not node.neighbors):
+			assignment[i] = node.domain[0]
+		else:
+			assignment[i] = node.domain[0]
+			node.update_neighbors(assignment[i])
+		i += 1
 	return assignment
-		
-def update_neighbors(self, assignment):
-	for i in range(0, len(node.neighbors)):
-		self.neighbors[i].remainingDomain.remove(assignment)
-	
 
-def make_arc_consistent(domain1, parent_nodes):
-	if(not domain1 or not domain2):
+def make_arc_consistent(tree):
+	if(not tree.neighbors):
+		return True
+	if(len(tree.neighbors) > 1): # only update domains from children to parent
+		return True		# to avoid redundant updating
+	if(len(tree.domain) == 1):
+		if(tree.domain[0] in tree.neighbors[0].domain):
+			tree.neighbors[0].remove(tree.domain[0])
+	elif(len(tree.neighbors.domain) == 1):
+		if(tree.neighbors[0].domain[0] in tree.domain):
+			tree.domain.remove(tree.neighbors[0].domain[0])
+	if(not tree.neighbors[0].domain or not tree.domain):
 		return False
-	for i in range(0, len(domain1)):
-		for j in range(0, len(domain2)):
-			if (domain1[i] != domain2[j]):
-				return True
-	return False
 
-def t_sort(tree):
-	s = []
+	return True
 
-	
