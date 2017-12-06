@@ -17,23 +17,29 @@ def m_print(obj):
 def remove_less_than(graph, deg, tree):
     copy = []
     for node in graph:
-        if deg <= node.degree:
-            copy.append(node)
-        else:
-	    for i in node.neighbors:
-	       	i.degree -= 1
-	    	tree.append(node)
-    return copy, tree
+	print node.name + str(node.degree)
+        if deg > node.degree:
+	    graph.remove(node)
+	    print "Remove: " + node.name + str(node.degree)
+	    copy.append(node) 
+    for node in copy:
+	for i in node.neighbors:
+		if i in graph:
+			i.degree -= 1
+			print "Update: " + i.name + str(i.degree)
+	       		tree.append(node)
+	    	
+    return graph, tree
 
 def remove(graph, node_a):
-    copy = []
-    for node_b in graph:
-        if node_b.name != node_a.name:
-	    if node_b in node_a.neighbors:
-	    	node_b.degree -= 1
-	    copy.append(node_b)
+    graph.remove(node_a)
+    for node in node_a.neighbors:
+        if node in graph:
+		node.degree -= 1
+		print node_a.name + " update : " + node.name + str(node.degree)
 
-    return copy
+
+    return graph
 
 def find_maxVertex(graph):
     maxVertex = graph[0]
@@ -48,8 +54,11 @@ def greedy(graph):
     tree = []
     graph, tree = remove_less_than(graph, 2, tree)
     while True:
+	for i in graph:
+		print "Graph: " + i.name
         v = find_maxVertex(graph)
         F.append(v)
+	print "Removing: " + v.name
         graph = remove(graph, v)
         graph, tree = remove_less_than(graph, 2, tree)
         length = len(graph)
@@ -88,7 +97,8 @@ def test1():
     for i in result:
 	for x in i.neighbors:
 		print i.name + " " +  x.name	
- 		
+ 	
+	
     while(True):
 	result_copy = copy.deepcopy(result)
 	tree_copy = copy.deepcopy(tree)
@@ -227,5 +237,5 @@ def test2():
 if __name__ == "__main__":
     print("Test 1")
     test1()
-    print("Test 2")
-    test2()
+    #print("Test 2")
+    #test2()
