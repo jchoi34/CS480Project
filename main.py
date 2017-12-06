@@ -16,10 +16,10 @@ def m_print(obj):
 # removes node from graph with deg < degree
 def remove_less_than(graph, deg, tree):
     copy = []
+    
     for node in graph:
 	print node.name + str(node.degree)
         if deg > node.degree:
-	    graph.remove(node)
 	    print "Remove: " + node.name + str(node.degree)
 	    copy.append(node) 
     for node in copy:
@@ -27,7 +27,8 @@ def remove_less_than(graph, deg, tree):
 		if i in graph:
 			i.degree -= 1
 			print "Update: " + i.name + str(i.degree)
-	       		tree.append(node)
+	graph.remove(node)
+	tree.append(node)
 	    	
     return graph, tree
 
@@ -38,8 +39,6 @@ def remove(graph, node_a):
 		node.degree -= 1
 		print node_a.name + " update : " + node.name + str(node.degree)
 
-
-    return graph
 
 def find_maxVertex(graph):
     maxVertex = graph[0]
@@ -55,11 +54,14 @@ def greedy(graph):
     graph, tree = remove_less_than(graph, 2, tree)
     while True:
 	for i in graph:
-		print "Graph: " + i.name
+		print "Graph: " + i.name + " " + str(i.degree)
         v = find_maxVertex(graph)
         F.append(v)
 	print "Removing: " + v.name
-        graph = remove(graph, v)
+        remove(graph, v)
+	for i in graph:
+                print "Graph: " + i.name + " " + str(i.degree)
+
         graph, tree = remove_less_than(graph, 2, tree)
         length = len(graph)
         if length == 0:
