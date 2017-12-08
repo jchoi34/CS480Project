@@ -1,3 +1,4 @@
+# Node data structure to represent territory on the map
 class Node:
         def __init__(self, name):
                 self.name = name

@@ -1,6 +1,8 @@
 from node import *
 
 # tree = entire set of nodes in graph with the cutset removed
+# Color each node in the tree while updating its neighbors
+# return a valid coloring or False if a node runs out of color options
 def tree_solver(tree):
 	assignment = [0] * len(tree)
 	for node in tree:
@@ -18,6 +20,14 @@ def tree_solver(tree):
 		i += 1
 	return assignment
 
+# Make the tree arc consistent
+# If a node has no neighbors it is alreadly consistent
+# only check "child nodes" or nodes with only 1 neighbor
+# We can just make arc consistent nodes that are in pairs 
+# or from the child to the parent 
+# Output: if node has a neighbor node and both nodes have atleast
+# 1 different color option from each other return true
+# if both nodes have only the same option or no options return False
 def make_arc_consistent(node):
 	if(not node.neighbors):
 		return True

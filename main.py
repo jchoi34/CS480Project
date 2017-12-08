@@ -3,6 +3,7 @@ from cutset_color import *
 from tree_CSP_Solver import *
 import copy
 
+# testing function
 def m_print(obj):
     if type(obj) is Node:
         foo = str(obj) + ":"
@@ -13,7 +14,7 @@ def m_print(obj):
         for node in obj:
             m_print(node)
 
-# removes node from graph with deg < degree
+# removes nodes from graph with deg < degree 2 and update its neighbors' degrees
 def remove_less_than(graph, deg, tree):
     copy = []
     
@@ -29,13 +30,14 @@ def remove_less_than(graph, deg, tree):
 	    	
     return graph, tree
 
+# remove a node from the graph and update degrees of its neighbors
 def remove(graph, node_a):
     graph.remove(node_a)
     for node in node_a.neighbors:
         if node in graph:
 		node.degree -= 1
 
-
+# find the node with the highest degree
 def find_maxVertex(graph):
     maxVertex = graph[0]
     for node in graph:
@@ -44,6 +46,7 @@ def find_maxVertex(graph):
 
     return maxVertex
 
+# create and return the cutset and the resulting tree
 def greedy(graph):
     F = []
     tree = []
@@ -58,21 +61,39 @@ def greedy(graph):
             break
     return F, tree
 
-def process_tree(tree, cutset):
-	copy = []
-	for i in tree:
-		neighbors = i.neighbors
-		for x in neighbors:
-			if x in cutset:
-				i.neighbors.remove(x)
-		copy.append(i)
-	return copy
+# update the neighbors in the nodes of the tree
+# if a node's neighbor is in the cutset then remove it from its list of neighbors
+def process_tree(tree, result):
+        for i in result:
+                for j in tree:
+                        if i in j.neighbors:
+                                j.neighbors.remove(i)
 
 
-
+# helper function to initialize the data
 def set_degree(graph):
 	for node in graph:
 		node.degree = len(node.neighbors)
+
+# helper function to reset the domains of every node to initial state
+def reset(tree, cutset):
+	for i in tree:
+		i.reset_domain()
+	for i in cutset:
+		i.reset_domain()
+
+# coloring function that calls the coloring functions for the cutset and tree
+# runs until a suitable coloring is found
+def color(cutset, tree):
+    while(True):
+        colored_cutset = color_cutset(cutset)
+        colored_tree = tree_solver(tree)
+        if((colored_cutset) != False and (colored_tree != False)):
+                break;
+   	reset(tree, cutset)
+
+    return colored_cutset, colored_tree
+
 
 def test1():
     a = Node('A')
@@ -89,38 +110,16 @@ def test1():
     f.neighbors = [b, c, d, e]
 
     graph = [a, b, c, d, e, f]
-
     set_degree(graph)
     result, tree = greedy(graph)
-
     process_tree(tree, result)  
     colored_cutset, colored_tree = color(result, tree)
 
+    # print out results
     for i in range(0, len(tree)):
 	print tree[i].name + ": " + colored_tree[i]	
     for i in range(0, len(result)):
 	print result[i].name + ": " + colored_cutset[i]
-
-def process_tree(tree, result):
-	for i in result:
-		for j in tree:
-			if i in j.neighbors:
-				j.neighbors.remove(i)
-def reset(tree, cutset):
-	for i in tree:
-		i.reset_domain()
-	for i in cutset:
-		i.reset_domain()
-
-def color(cutset, tree):
-    while(True):
-        colored_cutset = color_cutset(cutset)
-        colored_tree = tree_solver(tree)
-        if((colored_cutset) != False and (colored_tree != False)):
-                break;
-   	reset(tree, cutset)
-
-    return colored_cutset, colored_tree
 
 
 
@@ -238,10 +237,10 @@ def test2():
 
     set_degree(graph)
     result, tree = greedy(graph)
-
     process_tree(tree, result)
     colored_cutset, colored_tree = color(result, tree)
 
+    # print out results
     for i in range(0, len(tree)):
         print tree[i].name + ": " + colored_tree[i]
     for i in range(0, len(result)):
