@@ -8,12 +8,21 @@ class Node:
 	def __str__(self):
 		return self.name
 
+	def get_domain(self):
+		string = ""
+		for i in self.domain:
+			string += i + " "
+		return self.name + " " + string
+
         def update_neighbors(self, assignment):
-                for i in range (0, self.degrees()):
-			if(not self.neighbors[i].domain):
+                for i in self.neighbors:
+			if(not i.domain):
 				return False
-                        if(assignment in self.neighbors[i].domain):
-                                self.neighbors[i].domain.remove(assignment)
+                        if(assignment in i.domain):
+                                i.domain.remove(assignment)
+
+	def reset_domain(self):
+		self.domain = ["Red", "Blue", "Green", "Yellow"]
 
 	def degrees(self):
 		return len(self.neighbors)

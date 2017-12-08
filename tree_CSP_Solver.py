@@ -25,7 +25,7 @@ def make_arc_consistent(node):
 		return True		# to avoid redundant updating
 	if(len(node.domain) == 1):
 		if(node.domain[0] in node.neighbors[0].domain):
-			node.neighbors[0].remove(node.domain[0])
+			node.neighbors[0].domain.remove(node.domain[0])
 	elif(len(node.neighbors[0].domain) == 1):
 		if(node.neighbors[0].domain[0] in node.domain):
 			node.domain.remove(node.neighbors[0].domain[0])

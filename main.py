@@ -18,15 +18,12 @@ def remove_less_than(graph, deg, tree):
     copy = []
     
     for node in graph:
-	print node.name + str(node.degree)
         if deg > node.degree:
-	    print "Remove: " + node.name + str(node.degree)
 	    copy.append(node) 
     for node in copy:
 	for i in node.neighbors:
 		if i in graph:
 			i.degree -= 1
-			print "Update: " + i.name + str(i.degree)
 	graph.remove(node)
 	tree.append(node)
 	    	
@@ -37,7 +34,6 @@ def remove(graph, node_a):
     for node in node_a.neighbors:
         if node in graph:
 		node.degree -= 1
-		print node_a.name + " update : " + node.name + str(node.degree)
 
 
 def find_maxVertex(graph):
@@ -53,25 +49,26 @@ def greedy(graph):
     tree = []
     graph, tree = remove_less_than(graph, 2, tree)
     while True:
-	for i in graph:
-		print "Graph: " + i.name + " " + str(i.degree)
         v = find_maxVertex(graph)
         F.append(v)
-	print "Removing: " + v.name
         remove(graph, v)
-	for i in graph:
-                print "Graph: " + i.name + " " + str(i.degree)
-
         graph, tree = remove_less_than(graph, 2, tree)
         length = len(graph)
         if length == 0:
             break
     return F, tree
 
-def process_graph(graph):
-	for nodei in graph:
-		neighbors = [x for x in nodei.neighbors if x in graph]
-		nodei.neighbors = neighbors
+def process_tree(tree, cutset):
+	copy = []
+	for i in tree:
+		neighbors = i.neighbors
+		for x in neighbors:
+			if x in cutset:
+				i.neighbors.remove(x)
+		copy.append(i)
+	return copy
+
+
 
 def set_degree(graph):
 	for node in graph:
@@ -92,31 +89,40 @@ def test1():
     f.neighbors = [b, c, d, e]
 
     graph = [a, b, c, d, e, f]
+
     set_degree(graph)
     result, tree = greedy(graph)
-    process_graph(tree)   
- 
-    for i in result:
-	for x in i.neighbors:
-		print i.name + " " +  x.name	
- 	
-	
-    while(True):
-	result_copy = copy.deepcopy(result)
-	tree_copy = copy.deepcopy(tree)
-	colored_cutset = color_cutset(result_copy)
-	colored_tree = tree_solver(tree_copy)
-	if((colored_cutset) != False and (colored_tree != False)):
-		break; 
-	
-	for stuff in tree_copy:
-		print stuff
+
+    process_tree(tree, result)  
+    colored_cutset, colored_tree = color(result, tree)
 
     for i in range(0, len(tree)):
 	print tree[i].name + ": " + colored_tree[i]	
     for i in range(0, len(result)):
 	print result[i].name + ": " + colored_cutset[i]
-		
+
+def process_tree(tree, result):
+	for i in result:
+		for j in tree:
+			if i in j.neighbors:
+				j.neighbors.remove(i)
+def reset(tree, cutset):
+	for i in tree:
+		i.reset_domain()
+	for i in cutset:
+		i.reset_domain()
+
+def color(cutset, tree):
+    while(True):
+        colored_cutset = color_cutset(cutset)
+        colored_tree = tree_solver(tree)
+        if((colored_cutset) != False and (colored_tree != False)):
+                break;
+   	reset(tree, cutset)
+
+    return colored_cutset, colored_tree
+
+
 
 def test2():
     AL = Node('AL')
@@ -232,12 +238,18 @@ def test2():
 
     set_degree(graph)
     result, tree = greedy(graph)
-    process_graph(tree)
-    for stuff in result:
-        print(stuff)
+
+    process_tree(tree, result)
+    colored_cutset, colored_tree = color(result, tree)
+
+    for i in range(0, len(tree)):
+        print tree[i].name + ": " + colored_tree[i]
+    for i in range(0, len(result)):
+        print result[i].name + ": " + colored_cutset[i]
+
 
 if __name__ == "__main__":
     print("Test 1")
     test1()
-    #print("Test 2")
-    #test2()
+    print("Test 2")
+    test2()
